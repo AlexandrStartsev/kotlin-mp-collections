@@ -47,20 +47,6 @@
 
                         <executions>
                             <execution>
-                                <id>compile</id>
-                                <goals>
-                                    <goal>js</goal>
-                                </goals>
-                                <phase>compile</phase>
-                                <configuration>
-                                    <sourceDirs>
-                                        <sourceDir>src/main/js</sourceDir>
-                                        <sourceDir>src/main/kotlin</sourceDir>
-                                    </sourceDirs>
-                                </configuration>
-                            </execution>
-
-                            <execution>
                                 <id>test-compile</id>
                                 <goals>
                                     <goal>test-js</goal>
@@ -181,20 +167,6 @@
                         <version>${kotlin.version}</version>
 
                         <executions>
-                            <execution>
-                                <id>compile</id>
-                                <goals>
-                                    <goal>compile</goal>
-                                </goals>
-                                <phase>process-sources</phase>
-                                <configuration>
-                                    <sourceDirs>
-                                        <sourceDir>src/main/java</sourceDir>
-                                        <sourceDir>src/main/kotlin</sourceDir>
-                                    </sourceDirs>
-                                </configuration>
-                            </execution>
-
                             <execution>
                                 <id>test-compile</id>
                                 <goals>

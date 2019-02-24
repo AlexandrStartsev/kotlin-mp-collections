@@ -1,19 +1,11 @@
 package edu.alex
 
-internal class IteratorHandler<T, K>: MutableIterator<K> {
-    private val cursor: ES6Iterator<T>
-    private var prev: IteratorValue<T>? = null
-    private var head: IteratorValue<T>
+internal class IteratorHandler<T, K>(private val backingIterator: ES6Iterator<T>,
+                                     private val removeCb: (it: IteratorValue<T>) -> Unit,
+                                     private val nextCb: (it: IteratorValue<T>) -> K?): MutableIterator<K> {
 
-    private var removeCb: (it: IteratorValue<T>) -> Unit
-    private var nextCb: (it: IteratorValue<T>) -> K?
-
-    constructor(cursor: ES6Iterator<T>, removeCb: (it: IteratorValue<T>) -> Unit, nextCb: (it: IteratorValue<T>) -> K? ) {
-        this.cursor = cursor
-        this.removeCb = removeCb
-        this.nextCb = nextCb
-        head = cursor.next()
-    }
+    private var last: IteratorValue<T>? = null
+    private var head: IteratorValue<T> = backingIterator.next()
 
     override fun hasNext() = !head.done
 
@@ -21,17 +13,17 @@ internal class IteratorHandler<T, K>: MutableIterator<K> {
         if(hasNext()) {
             var tmp: dynamic = nextCb(head)
             if(jsTypeOf(tmp) === "undefined") tmp = null
-            prev = head
-            head = cursor.next()
+            last = head
+            head = backingIterator.next()
             return tmp
         }
         throw NoSuchElementException()
     }
 
     override fun remove() {
-        prev?.takeIf { !it.done }?.let {
+        last?.takeIf { !it.done }?.let {
             removeCb(it)
-            prev = null
+            last = null
             return@remove
         }
         throw IllegalStateException()

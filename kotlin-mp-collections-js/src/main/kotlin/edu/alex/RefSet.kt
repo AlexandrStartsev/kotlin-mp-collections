@@ -1,48 +1,50 @@
 package edu.alex
 
 class RefSet<K>: MutableSet<K>  {
-    private var set = ES6Set<K>()
+    private val backingSet = ES6Set<K>()
 
-    override val size: Int get() = set.size
+    constructor ()
+
+    constructor (c: Collection<K>) {
+        addAll(c)
+    }
+
+    constructor (vararg args: K) {
+        args.forEach { add(it) }
+    }
+
+    override val size: Int get() = backingSet.size
 
     override fun add(element: K): Boolean {
         val before = size
-        set.add(element)
+        backingSet.add(element)
         return before != size
     }
 
-    override fun addAll(elements: Collection<K>): Boolean {
-        val before = size
-        elements.forEach { set.add(it) }
-        return before != size
-    }
+    override fun addAll(elements: Collection<K>) = elements.fold(false) { anyChange, e -> add(e) || anyChange }
 
-    override fun clear() = set.clear()
+    override fun clear() = backingSet.clear()
 
-    override fun contains(element: K) = set.has(element)
+    override fun contains(element: K) = backingSet.has(element)
 
-    override fun containsAll(elements: Collection<K>) = elements.all { set.has(it) }
+    override fun containsAll(elements: Collection<K>) = elements.all { contains(it) }
 
     override fun isEmpty() = size == 0
 
-    override fun iterator(): MutableIterator<K> = IteratorHandler(set.values(), { set.delete(it.value) }, { it.value } )
+    override fun iterator(): MutableIterator<K> = IteratorHandler(backingSet.values(), { backingSet.delete(it.value) }, { it.value } )
 
-    override fun remove(element: K): Boolean {
-        val before = size
-        set.delete(element)
-        return before != size
-    }
+    override fun remove(element: K) = backingSet.delete(element)
 
-    override fun removeAll(elements: Collection<K>): Boolean {
-        val before = size
-        elements.forEach { set.delete(it) }
-        return before != size
-    }
+    override fun removeAll(elements: Collection<K>) = elements.fold(false) { anyChange, e -> remove(e) || anyChange }
 
-    // TODO: at some point it s easier to re-create internal set. Idk.
     override fun retainAll(elements: Collection<K>): Boolean {
+        val c = if(elements is RefSet) elements else RefSet(elements)
         val before = size
-        set.forEach { it, _, _ -> if(!elements.contains(it)) set.delete(it) }
+        backingSet.forEach { it, _, _ -> if(!c.contains(it)) backingSet.delete(it) }
         return before != size
     }
+
+    override fun toString() = joinToString(prefix = "[", postfix = "]")
+
+    fun toMutableSet(): MutableSet<K> = RefSet(this)
 }

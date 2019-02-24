@@ -4,7 +4,8 @@
   "description": "tests",
   "main": "dist/main.js",
   "scripts": {
-    "test": "npm install && webpack-cli && mocha ./dist/main.js"
+    "test": "npm install && webpack-cli && mocha ./dist/main.js",
+    "debug": "npm install && webpack-cli && mocha --inspect-brk ./dist/main.js"
   },
   "author": "ostartsev",
   "license": "ISC",
