@@ -203,6 +203,7 @@
                                         <sourceDir>src/main/jvm</sourceDir>
                                         <sourceDir>src/main/kotlin</sourceDir>
                                     </sourceDirs>
+                                    <multiPlatform>true</multiPlatform>
                                 </configuration>
                             </execution>
                             <execution>
