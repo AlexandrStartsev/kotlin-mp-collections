@@ -12,14 +12,14 @@ class RefSet<K>: MutableSet<K> {
         backingSet = LinkedHashSet()
     }
 
-    constructor (c: Collection<K>) {
+    constructor (c: Iterable<K>) {
         backingSet = LinkedHashSet()
-        addAll(c)
+        c.forEach { add(it) }
     }
 
     constructor (vararg args: K) {
         backingSet = LinkedHashSet()
-        Arrays.stream<K>(args).forEach { add(it) }
+        args.forEach { add(it) }
     }
 
     internal constructor(backingSet: MutableSet<ObjectReference<K>>) {
@@ -55,6 +55,4 @@ class RefSet<K>: MutableSet<K> {
     override fun clear() = backingSet.clear()
 
     override fun toString() = joinToString(prefix = "[", postfix = "]")
-
-    fun toMutableSet(): MutableSet<K> = RefSet(this)
 }

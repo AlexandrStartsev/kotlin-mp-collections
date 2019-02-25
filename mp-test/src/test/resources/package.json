@@ -1,5 +1,5 @@
 {
-  "name": "mp-test",
+  "name": "mp-test-tests",
   "version": "1.0.0-SNAPSHOT",
   "description": "tests",
   "main": "dist/main.js",

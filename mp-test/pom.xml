@@ -47,6 +47,19 @@
 
                         <executions>
                             <execution>
+                                <id>compile</id>
+                                <goals>
+                                    <goal>js</goal>
+                                </goals>
+                                <phase>process-sources</phase>
+                                <configuration>
+                                    <sourceDirs>
+                                        <sourceDir>src/main/js</sourceDir>
+                                        <sourceDir>src/main/kotlin</sourceDir>
+                                    </sourceDirs>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>test-compile</id>
                                 <goals>
                                     <goal>test-js</goal>
@@ -64,6 +77,7 @@
                             <moduleKind>umd</moduleKind>
                             <sourceMap>true</sourceMap>
                             <sourceMapEmbedSources>always</sourceMapEmbedSources>
+                            <multiPlatform>true</multiPlatform>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -112,9 +126,20 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <configuration>
-                            <outputDirectory>target/test-js</outputDirectory>
-                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>default-resources</id>
+                                <configuration>
+                                    <outputDirectory>target/js</outputDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>default-testResources</id>
+                                <configuration>
+                                    <outputDirectory>target/test-js</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
 
@@ -168,6 +193,19 @@
 
                         <executions>
                             <execution>
+                                <id>compile</id>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <phase>process-sources</phase>
+                                <configuration>
+                                    <sourceDirs>
+                                        <sourceDir>src/main/jvm</sourceDir>
+                                        <sourceDir>src/main/kotlin</sourceDir>
+                                    </sourceDirs>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>test-compile</id>
                                 <goals>
                                     <goal>test-compile</goal>
@@ -178,6 +216,7 @@
                                         <sourceDir>src/test/java</sourceDir>
                                         <sourceDir>src/test/kotlin</sourceDir>
                                     </sourceDirs>
+                                    <multiPlatform>true</multiPlatform>
                                 </configuration>
                             </execution>
                         </executions>

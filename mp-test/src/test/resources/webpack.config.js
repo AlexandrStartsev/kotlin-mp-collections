@@ -7,7 +7,8 @@ module.exports = {
         modules: [ "node_modules" ],
         alias: {
             "kotlin": path.resolve(__dirname, 'node_modules/kotlin'),
-            "kotlin-mp-collections-js": path.resolve(__dirname, '../../../kotlin-mp-collections-js/target/js')
+            "kotlin-mp-collections-js": path.resolve(__dirname, '../../../kotlin-mp-collections-js/target/js'),
+            "mp-test": path.resolve(__dirname, '../js')
         }
     },
     mode: "development",

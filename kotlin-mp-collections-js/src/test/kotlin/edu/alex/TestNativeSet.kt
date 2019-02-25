@@ -29,6 +29,7 @@ class TestNativeSet {
         assertEquals(4, set.size)
     }
 
+    /*
     @Test
     fun testIntSpeed() {
         val arr = (0 until 100).map { rand(100) }.toTypedArray()
@@ -111,5 +112,5 @@ class TestNativeSet {
         assertFalse { set.retainAll(listOf("a", "b")) }
 
         assertEquals(2, set.size)
-    }
+    }*/
 }

@@ -5,8 +5,8 @@ class RefSet<K>: MutableSet<K>  {
 
     constructor ()
 
-    constructor (c: Collection<K>) {
-        addAll(c)
+    constructor (c: Iterable<K>) {
+        c.forEach { add(it) }
     }
 
     constructor (vararg args: K) {
@@ -45,6 +45,4 @@ class RefSet<K>: MutableSet<K>  {
     }
 
     override fun toString() = joinToString(prefix = "[", postfix = "]")
-
-    fun toMutableSet(): MutableSet<K> = RefSet(this)
 }
