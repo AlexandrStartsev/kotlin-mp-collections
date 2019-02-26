@@ -11,6 +11,13 @@
 
     <artifactId>mp-test</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>edu.alex</groupId>
+            <artifactId>kotlin-mp-collections-common</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+    </dependencies>
     <profiles>
         <profile>
             <id>js</id>
@@ -21,11 +28,11 @@
                 </property>
             </activation>
             <dependencies>
-                <dependency>
+                <!--<dependency>
                     <groupId>edu.alex</groupId>
                     <artifactId>kotlin-mp-collections-js</artifactId>
                     <version>${pom.version}</version>
-                </dependency>
+                </dependency> -->
                 <dependency>
                     <groupId>org.jetbrains.kotlin</groupId>
                     <artifactId>kotlin-stdlib-js</artifactId>
@@ -160,11 +167,11 @@
             </properties>
 
             <dependencies>
-                <dependency>
+                <!--<dependency>
                     <groupId>edu.alex</groupId>
                     <artifactId>kotlin-mp-collections-jvm</artifactId>
                     <version>${pom.version}</version>
-                </dependency>
+                </dependency> -->
                 <dependency>
                     <groupId>org.jetbrains.kotlin</groupId>
                     <artifactId>kotlin-stdlib</artifactId>
@@ -204,6 +211,7 @@
                                         <sourceDir>src/main/kotlin</sourceDir>
                                     </sourceDirs>
                                     <multiPlatform>true</multiPlatform>
+                                    <jvmTarget>1.8</jvmTarget>
                                 </configuration>
                             </execution>
                             <execution>
@@ -213,6 +221,7 @@
                                 </goals>
                                 <phase>process-test-sources</phase>
                                 <configuration>
+                                    <jvmTarget>1.8</jvmTarget>
                                     <sourceDirs>
                                         <sourceDir>src/test/java</sourceDir>
                                         <sourceDir>src/test/kotlin</sourceDir>

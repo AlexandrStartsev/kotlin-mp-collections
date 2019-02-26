@@ -3,6 +3,7 @@ package edu.alex
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 class TestMap {
 
@@ -21,11 +22,19 @@ class TestMap {
         val map = RefMap<String, String>()
 
         assertFailsWith(UnsupportedOperationException::class) {
-            map.entries.add(object: MutableMap.MutableEntry<String, String> {
+            map.entries.add(object: AbstractRefMap.RefEntry<String, String> {
                 override val key = "1"
                 override val value = "2"
                 override fun setValue(newValue: String) = "-"
             })
+        }
+
+        assertFailsWith(UnsupportedOperationException::class) {
+            map.keys.add("123")
+        }
+
+        assertFailsWith(UnsupportedOperationException::class) {
+            map.values.add("123")
         }
     }
 
@@ -37,20 +46,20 @@ class TestMap {
 
         val entry = map.entries.filter { it.key == "2" }.first()
 
-        assertEquals("b", entry.value)
+        assertEquals("b", entry?.value)
         assertEquals("b", map.put("2", "c"))
 
-        assertEquals("b", entry.value)
-        assertEquals("b", entry.setValue("e"))
-        assertEquals("e", entry.value)
+        assertEquals("b", entry?.value)
+        assertEquals("b", entry?.setValue("e"))
+        assertEquals("e", entry?.value)
         assertEquals("e", map["2"])
 
         map["2"] = "f"
-        assertEquals("e", entry.value)
+        assertEquals("e", entry?.value)
 
         map.remove("2")
-        assertEquals("e", entry.value)
-        assertEquals("e", entry.setValue("f"))
+        assertEquals("e", entry?.value)
+        assertEquals("e", entry?.setValue("f"))
         assertEquals("f", map["2"])
 
         /*

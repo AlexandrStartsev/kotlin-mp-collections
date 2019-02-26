@@ -8,8 +8,9 @@
     <artifactId>kotlin-mp-collections</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>kotlin-mp-collections-js</module>
-        <module>kotlin-mp-collections-jvm</module>
+        <module>kotlin-mp-collections-common</module>
+   <!--     <module>kotlin-mp-collections-js</module>
+        <module>kotlin-mp-collections-jvm</module> -->
         <module>mp-test</module>
     </modules>
     <packaging>pom</packaging>
