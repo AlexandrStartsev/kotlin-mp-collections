@@ -1,4 +1,4 @@
-package edu.alex
+package edu.alex.benchmark
 
 actual fun timeIt(block: () -> Unit): Int {
     val cur = js("+new Date()")

@@ -3,13 +3,6 @@ package edu.alex
 import kotlin.test.*
 
 class TestSet {
-
-    fun makeRandomString(size: Int = 20): String {
-        val all = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-        return (0 until size).map { (0 until all.length).random() }.fold("") { a, b -> a + all[b] }
-    }
-
-
     data class C1(val a: String)
 
     @Test
@@ -256,63 +249,7 @@ class TestSet {
         assertTrue { refSet.contains(obj3) }
         assertTrue { refSet.contains(obj4) }
         assertFalse { refSet.contains(obj5) }
-
     }
-
-  /*  @Test
-    fun testIntersect() {
-        val obj1 = C1("a")
-        val obj2 = C1("a")
-        val obj3 = C1("a")
-        val obj4 = C1("a")
-        val obj5 = C1("a")
-        val other = listOf(obj2, obj3, obj5)
-        val me = RefSet(obj1, obj2, obj3, obj4)
-        val set = me.intersect(other)
-        assertTrue { set is RefSet }
-        assertEquals(2, set.size)
-    }
-
-    @Test
-    fun testSpeed() {
-
-        fun doAdd(createSet: () -> MutableSet<String>, times: Int = 10000) {
-            val arr = (0 until 100).map { makeRandomString() }
-
-            (0 until times).forEach {
-                val set = createSet()
-                set.addAll (arr)
-            }
-        }
-
-        println("HashSet 1M insertions " + timeIt { doAdd({ HashSet() }) } )
-        println("RefSet 1M insertions " + timeIt { doAdd({ RefSet() }) } )
-
-        fun doSearch(set: MutableSet<String>, times: Int = 1000000) {
-            val arr = (0 until 100).map { makeRandomString() }
-            set.addAll( arr )
-
-            (0 until times).forEach {
-                set.contains(arr[it%100] )
-            }
-        }
-
-        println("HashSet 1M contains " + timeIt { doSearch(HashSet()) } )
-        println("RefSet 1M contains " + timeIt { doSearch(RefSet()) } )
-
-        fun <T: MutableSet<String>> doIntersect(set: T, times: Int = 1000) {
-            val arr = (0 until 100).map { makeRandomString() }
-            val arr2 = arr.subList(20, 70) + (0 until 50).map { makeRandomString() }
-            set.addAll( arr )
-
-            (0 until times).forEach {
-                set.intersect(arr2)
-            }
-        }
-
-        println("HashSet 1K intersect " + timeIt { doIntersect(HashSet()) } )
-        println("RefSet 1K intersect " + timeIt { doIntersect(RefSet()) } )
-    }*/
 
     @Test
     fun testForEach() {
