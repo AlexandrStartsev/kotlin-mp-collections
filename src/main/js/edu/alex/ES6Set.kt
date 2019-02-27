@@ -14,7 +14,7 @@ internal external class ES6Set<K> {
 
     fun forEach(callback: (value: K, key: K, set: ES6Set<K>) -> Any)
 
-    fun has(key: K): Boolean
+    fun has(key: K?): Boolean
 
     fun values(): ES6Iterator<K>
 }

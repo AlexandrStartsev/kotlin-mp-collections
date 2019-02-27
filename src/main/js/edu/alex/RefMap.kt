@@ -45,7 +45,7 @@ class RefMap<K, V>: AbstractRefMap<K, V> {
 
             override fun clear() = map.clear()
 
-            override fun contains(element: AbstractRefMap.RefEntry<K, V>) = map.get(element.key)?.let { it === element.value } ?: false
+            override fun contains(element: AbstractRefMap.RefEntry<K, V>) = map.get(element?.key)?.let { it === element?.value } ?: false
 
             override fun isEmpty() = size == 0
 
@@ -55,7 +55,7 @@ class RefMap<K, V>: AbstractRefMap<K, V> {
             override fun remove(element: AbstractRefMap.RefEntry<K, V>) =
                     if(map.get(element.key) === element.value) map.delete(element.key) else false
 
-            override fun retainAll(elements: RefCollection<AbstractRefMap.RefEntry<K, V>>): Boolean {
+            /*override fun retainAll(elements: RefCollection<AbstractRefMap.RefEntry<K, V>>): Boolean {
                 // we don't want to make a refset out of elements because we'll be comparing references to Entry, not keys
                 val c = RefMap<K, V>()
                 elements.forEach { c.map.set(it.key, it.value) }
@@ -65,7 +65,7 @@ class RefMap<K, V>: AbstractRefMap<K, V> {
                     if (!c.containsEntry(it.next()))
                         it.remove()
                 return before != size
-            }
+            }*/
         }
 
     override val keys: AbstractRefSet<K>
@@ -82,12 +82,12 @@ class RefMap<K, V>: AbstractRefMap<K, V> {
 
             override fun remove(element: K) = map.delete(element)
 
-            override fun retainAll(elements: RefCollection<K>): Boolean {
+            /*override fun retainAll(elements: RefCollection<K>): Boolean {
                 val c = if(elements is AbstractRefSet) elements else RefSet(elements)
                 val before = size
                 map.forEach { _, it, _ -> if(!c.contains(it)) map.delete(it) }
                 return before != size
-            }
+            }*/
         }
 
     override val values: RefCollection<V>
@@ -106,12 +106,12 @@ class RefMap<K, V>: AbstractRefMap<K, V> {
 
             override fun remove(element: V) = entries.first { it.value === element }?.let { map.delete(it.key) } ?: false
 
-            override fun retainAll(elements: RefCollection<V>): Boolean {
+            /*override fun retainAll(elements: RefCollection<V>): Boolean {
                 val c = if(elements is AbstractRefSet) elements else RefSet(elements)
                 val before = size
                 map.forEach { value, key, _ -> if(!c.contains(value)) map.delete(key) }
                 return before != size
-            }
+            }*/
         }
 
     override val size: Int get() = map.size

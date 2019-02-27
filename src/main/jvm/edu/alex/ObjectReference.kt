@@ -15,6 +15,8 @@ internal interface ObjectReference<T> {
         override fun equals(other: Any?): Boolean {
             return other is ObjectReference<*> && this.ref == other.get()
         }
+
+        override fun toString() = "(Ref: ${this.ref})"
     }
 
     class NonPrimitiveReference<T> internal constructor(private val ref: T) : ObjectReference<T> {
@@ -30,19 +32,20 @@ internal interface ObjectReference<T> {
         override fun equals(other: Any?): Boolean {
             return other is ObjectReference<*> && this.ref === other.get()
         }
+
+        override fun toString() = "(Ref: ${this.ref})"
     }
 
     companion object {
+
+        private fun isPrimitive(obj: Any) = obj is String || obj is Int || obj is Boolean || obj is Double
 
         @Suppress("UNCHECKED_CAST")
         fun <T> wrap(obj: T?): ObjectReference<T> {
             if (obj == null) {
                 return nullReference as ObjectReference<T>
             }
-            return if (obj is String || obj is Int || obj is Boolean) {
-                PrimitiveReference(obj)
-            } else NonPrimitiveReference(obj)
-
+            return if (isPrimitive(obj)) PrimitiveReference(obj) else NonPrimitiveReference(obj)
         }
 
         private val nullReference: ObjectReference<Any?> = object : ObjectReference<Any?> {
@@ -57,6 +60,8 @@ internal interface ObjectReference<T> {
             override fun equals(other: Any?): Boolean {
                 return other == null || other is ObjectReference<*> && other.get() == null
             }
+
+            override fun toString() = "(Ref: NULL)"
         }
     }
 }

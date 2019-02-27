@@ -70,26 +70,15 @@ class TestSet {
         assertFalse { RefSet(2, 3).add(2) }
     }
 
-   /* @Test
+    @Test
     fun testVarArgs() {
-        val set = setOf("6", "1", "2", "4", "5", "8")
-        val set1 = RefSet("6", "1", "2", "4", "5", "8")
+        val set = RefSet("6", "1", "2", "4", "5", "8")
+        val set1 = RefSet(set)
         val set2 = RefSet(listOf("6", "1", "2", "4", "5", "8"))
 
-        assertEquals(set, set.intersect(set1))
-        assertEquals(set, set.intersect(set2))
+        assertTrue { collectionsEqualOrdered(set, set.intersect(set1)) }
+        assertTrue { collectionsEqualOrdered(set, set.intersect(set2)) }
     }
-
-    @Test
-    fun toMutableSet() {
-        assertTrue { RefSet("a").toMutableSet() is RefSet }
-
-        val obj1 = C1("a")
-        val obj2 = C1("a")
-        val set = RefSet(obj1)
-        assertTrue { set.toMutableSet().add(obj2) }
-        assertEquals(1, set.size)
-    }*/
 
     @Test
     fun testIterator() {
@@ -178,13 +167,12 @@ class TestSet {
 
     }
 
- /*   @Test
+    @Test
     fun testRemoveAll() {
-        val refSet = RefSet("6", "1", "2", "4", "5", "8")
+        val refSet: RefSet<String?> = RefSet("6", "1", "2", "4", "5", "8")
         refSet.removeAll(listOf("2", "5", null, "8"))
 
-        assertEquals("614", refSet.joinToString(separator = ""))
-
+        assertEquals("6, 1, 4", refSet.joinToString())
     }
 
     @Test
@@ -195,8 +183,8 @@ class TestSet {
         assertTrue { refSet.addAll(listOf("6", "5", null, "8", "9")) }
         assertFalse { refSet.addAll(listOf("6", "5", null, "8")) }
 
-        assertEquals("6125null89", refSet.joinToString(separator = ""))
-    }*/
+        assertEquals("6, 1, 2, 5, null, 8, 9", refSet.joinToString())
+    }
 
     @Test
     fun testContains() {
@@ -240,15 +228,14 @@ class TestSet {
         assertEquals(0, refSetObj.size)
     }
 
-
-    /*@Test
+    @Test
     fun testToString() {
         val refSet = RefSet("1", "2", "3")
-        assertEquals("[1, 2, 3]", refSet.toString())
+        assertEquals("1, 2, 3", refSet.joinToString())
 
         val refSetObj = RefSet(C1("a"), C1("b"), C1("b"))
-        assertEquals("[C1(a=a), C1(a=b), C1(a=b)]", refSetObj.toString())
-    }*/
+        assertEquals("C1(a=a), C1(a=b), C1(a=b)", refSetObj.joinToString())
+    }
 
     @Test
     fun testRetainAll() {
@@ -326,5 +313,20 @@ class TestSet {
         println("HashSet 1K intersect " + timeIt { doIntersect(HashSet()) } )
         println("RefSet 1K intersect " + timeIt { doIntersect(RefSet()) } )
     }*/
+
+    @Test
+    fun testForEach() {
+        var set = RefSet("1", "2", "3", "4", "2")
+        var s = ""
+        set.forEach { s += it }
+        assertEquals("1234", s)
+
+        s = ""
+        set.clear()
+
+        set.forEach { s += it }
+        assertEquals("", s)
+
+    }
 
 }

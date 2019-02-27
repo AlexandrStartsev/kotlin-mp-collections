@@ -10,4 +10,6 @@ interface AbstractRefList<E>: RefCollection<E> { // List
     fun removeAt(index: Int)
 
     fun indexOf(element: @UnsafeVariance E): Int
+
+    fun slice(start: Int, end: Int? = null): AbstractRefList<E>
 }

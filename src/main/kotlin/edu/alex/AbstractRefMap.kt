@@ -32,11 +32,14 @@ interface AbstractRefMap<K, V> {
     // ===
     fun isEmpty() = size == 0
 
-    fun containsEntry(key: K?, value: V?): Boolean = get(key)?.let { it === value } ?: false
+    fun contains(key: K, value: V): Boolean = when(value) {
+        null -> containsKey(key) && get(key) === null
+        else -> get(key)?.let { it === value } ?: false
+    }
 
-    fun containsEntry(entry: RefEntry<K, V>): Boolean = containsEntry(entry.key, entry.value)
+    fun contains(entry: RefEntry<K, V>): Boolean = contains(entry.key, entry.value)
 
-    fun containsEntry(pair: Pair<K, V>): Boolean = containsEntry(pair.first, pair.second)
+    fun contains(pair: Pair<K, V>): Boolean = contains(pair.first, pair.second)
 
     fun iterator(): MutableIterator<RefEntry<K, V>> = entries.iterator()
 
@@ -49,8 +52,6 @@ interface AbstractRefMap<K, V> {
     fun putAll(from: Map<K, V>) = from.forEach { put(it.key, it.value) }
 
     fun putAll(from: AbstractRefMap<K, V>) = from.forEach { put(it.key, it.value) }
-
-    fun forEach(action: (RefEntry<K, V>) -> Unit) { for(entry in iterator()) action(entry) }
 
     fun delete(key: K?) { remove(key) }
 }

@@ -33,12 +33,12 @@ actual class RefSet<K>: AbstractRefSet<K>  {
 
     override fun remove(element: K) = backingSet.delete(element)
 
-    override fun retainAll(elements: RefCollection<K>): Boolean {
+    /*override fun retainAll(elements: RefCollection<K>): Boolean {
         val c = if( elements is AbstractRefSet ) elements else RefSet(elements)
         val before = size
         backingSet.forEach { it, _, _ -> if(!c.contains(it)) backingSet.delete(it) }
         return before != size
-    }
+    }*/
 
     //override fun toString() = joinToString(prefix = "[", postfix = "]")
 }

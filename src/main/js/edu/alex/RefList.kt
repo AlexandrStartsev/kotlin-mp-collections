@@ -1,7 +1,34 @@
 package edu.alex
 
 actual class RefList<E>: AbstractRefList<E> {
-    private val backingArray = js("[]") //ES6Array<E>()
+    private val backingArray: dynamic //ES6Array<E>()
+
+    constructor () {
+        backingArray = js("[]")
+    }
+
+    constructor (c: Iterable<E>) {
+        backingArray = js("[]")
+        c.forEach { add(it) }
+    }
+
+    constructor (c: RefCollection<E>) {
+        if(c is RefList) {
+            backingArray = c.backingArray.slice(0)
+        } else {
+            backingArray = js("[]")
+            c.forEach { add(it) }
+        }
+    }
+
+    constructor (vararg args: E) {
+        backingArray = js("[]")
+        args.forEach { add(it) }
+    }
+
+    private constructor(backingArray: dynamic, nothing: Boolean) {
+        this.backingArray = backingArray
+    }
 
     override val size: Int get() = backingArray.length
 
@@ -53,14 +80,6 @@ actual class RefList<E>: AbstractRefList<E> {
         else -> { removeAt(idx); true }
     }
 
-    override fun retainAll(elements: RefCollection<E>): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun retainAll(elements: Collection<E>): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun add(index: Int, element: E) {
         if(index < 0 || index > size)
             throw IndexOutOfBoundsException()
@@ -68,12 +87,28 @@ actual class RefList<E>: AbstractRefList<E> {
     }
 
     override fun removeAt(index: Int) {
+        if( index < 0 || index >= size )
+            throw IndexOutOfBoundsException()
         backingArray.splice(index, 1)
     }
 
     override fun set(index: Int, element: E): E {
+        if( index < 0 || index >= size )
+            throw IndexOutOfBoundsException()
         val old = backingArray[index]
         backingArray[index] = element
         return old
+    }
+
+    override fun slice(start: Int, end: Int?): AbstractRefList<E> {
+        if (start < 0 || start >= size)
+            throw IndexOutOfBoundsException()
+        return when (end) {
+            null -> RefList<E>(backingArray.slice(start), true)
+            else -> {
+                if (end < start || end > size) throw IndexOutOfBoundsException()
+                RefList<E>(backingArray.slice(start, end), true)
+            }
+        }
     }
 }

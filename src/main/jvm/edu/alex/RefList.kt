@@ -3,7 +3,21 @@ package edu.alex
 import edu.alex.ObjectReference.Companion.wrap
 
 actual class RefList<E>: AbstractRefList<E> {
-    private val backingList = java.util.ArrayList<ObjectReference<E>>()
+    private val backingList: java.util.ArrayList<ObjectReference<E>> = java.util.ArrayList()
+
+    constructor ()
+
+    constructor (c: Iterable<E>) {
+        c.forEach { add(it) }
+    }
+
+    constructor (c: RefCollection<E>) {
+        c.forEach { add(it) }
+    }
+
+    constructor (vararg args: E) {
+        args.forEach { add(it) }
+    }
 
     override val size: Int
         get() = backingList.size
@@ -29,7 +43,7 @@ actual class RefList<E>: AbstractRefList<E> {
 
     override fun remove(element: E) = backingList.remove(wrap(element))
 
-    override fun retainAll(elements: RefCollection<E>): Boolean {
+    /*override fun retainAll(elements: RefCollection<E>): Boolean {
         val c = if(elements is AbstractRefSet) elements else RefSet(elements)
         val it = iterator()
         val before = size
@@ -38,9 +52,7 @@ actual class RefList<E>: AbstractRefList<E> {
                 it.remove()
         }
         return before != size
-    }
-
-    override fun retainAll(elements: Collection<E>) = retainAll(RefSet(elements))
+    }*/
 
     override fun add(index: Int, element: E) = backingList.add(index, wrap(element))
 
@@ -49,4 +61,10 @@ actual class RefList<E>: AbstractRefList<E> {
     }
 
     override fun set(index: Int, element: E): E = backingList.set(index, wrap(element)).get()
+
+    override fun slice(start: Int, end: Int?): AbstractRefList<E> {
+        val ret = RefList<E>()
+        ret.backingList.addAll(backingList.subList(start, end ?: size))
+        return ret
+    }
 }
