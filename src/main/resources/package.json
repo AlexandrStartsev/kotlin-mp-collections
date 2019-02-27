@@ -1,0 +1,13 @@
+{
+  "name": "kotlin-ref-collections",
+  "version": "1.0.0-SNAPSHOT",
+  "description": "Collections that use '===' for equality",
+  "main": "kotlin-ref-collections.js",
+  "scripts": { },
+  "author": "ostartsev",
+  "license": "ISC",
+  "dependencies": {
+    "kotlin": "1.3.21"
+  },
+  "devDependencies": {}
+}
