@@ -23,4 +23,6 @@ internal external class ES6Array<E> {
     fun forEach(action:(E) -> Any)
 
     fun forEach(action:(E, Int) -> Any)
+
+    fun filter(predicate: (E) -> Boolean): ES6Array<E>
 }

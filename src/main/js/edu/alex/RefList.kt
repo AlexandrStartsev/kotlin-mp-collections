@@ -117,4 +117,6 @@ actual class RefList<E>: AbstractRefList<E> {
     override fun forEach(action: (E) -> Unit) {
         backingArray.forEach(action)
     }
+
+    override fun filter(predicate: (E) -> Boolean) = RefList(this.backingArray.filter { predicate(it) })
 }

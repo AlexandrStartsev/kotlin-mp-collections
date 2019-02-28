@@ -9,8 +9,6 @@ inline fun <T, R> RefCollection<T>.fold(initial: R, operation: (acc: R, T) -> R)
     return accumulator
 }
 
-inline fun <T> RefCollection<T>.filter(crossinline predicate: (T) -> Boolean): RefCollection<T> = this.filter(RefList()) { predicate(it) }
-
 inline fun <T, M: RefCollection<T>> RefCollection<T>.filter(destination: M, crossinline predicate: (T) -> Boolean): M {
     this.forEach { if(predicate(it))  destination.add(it) }
     return destination

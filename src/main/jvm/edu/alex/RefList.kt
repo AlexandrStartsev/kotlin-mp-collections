@@ -67,4 +67,6 @@ actual class RefList<E>: AbstractRefList<E> {
         ret.backingList.addAll(backingList.subList(start, end ?: size))
         return ret
     }
+
+    override fun filter(predicate: (E) -> Boolean) = RefList(this.backingList.map { it.get() }.filter { predicate(it) })
 }

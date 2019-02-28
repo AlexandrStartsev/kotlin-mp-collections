@@ -5,7 +5,7 @@ import kotlin.test.*
 
 class Benchmark {
 
-    private val doBenchmarks = true //false
+    private val doBenchmarks = false
 
     private fun makeRandomString(size: Int = 20): String {
         val all = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
@@ -17,6 +17,24 @@ class Benchmark {
         val quarter = size/4
         val arr2 = arr.subList(quarter, size - quarter) + (0 until size/2).map { makeRandomString(stringSize) }
         return arr.toTypedArray() to arr2.toTypedArray()
+    }
+
+    @Test
+    fun listFilter() {
+        if(!doBenchmarks) return
+
+        val refList: RefCollection<Int> = RefList()
+        val arrayList = ArrayList<Int>()
+        for (i in 1..100) {
+            refList.add(i)
+            arrayList.add(i)
+        }
+        println("1000000@ ArrayList(size: 100) filter: " + timeIt {
+            (0 until 1000000).forEach { arrayList.filter { it and 3 == 0 } }
+        })
+        println("1000000@ RefList(size: 100) filter: " + timeIt {
+            (0 until 1000000).forEach { refList.filter { it and 3 == 0 } }
+        })
     }
 
     @Test

@@ -19,4 +19,6 @@ interface RefCollection<K> {
     fun add(element: K): Boolean = throw UnsupportedOperationException("Add is not supported on values")
 
     fun isEmpty() = size == 0
+
+    fun filter(predicate: (K) -> Boolean): RefCollection<K> = this.filter(RefList()) { predicate(it) }
 }
