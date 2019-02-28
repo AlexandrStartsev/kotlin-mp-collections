@@ -53,7 +53,7 @@ inline fun <T, R> RefCollection<T>.map(crossinline transform: (T) -> R): RefList
 }
 
 fun <K> wrapLookupIfReasonable(itemLookup: RefCollection<K>, itemsToLook: RefCollection<K>? = null): RefCollection<K> {
-    if(itemLookup is AbstractRefSet || itemLookup.size < 50 || itemsToLook != null && itemsToLook.size < 50 ) return itemLookup
+    if(itemLookup is AbstractRefSet || itemLookup.size < 25 || itemsToLook != null && itemsToLook.size < 25 ) return itemLookup
     return RefSet(itemLookup)
 }
 
@@ -101,7 +101,6 @@ fun <K, V> RefCollection<V>.groupBy(keyExtractor: (V) -> K): AbstractRefMap<K, V
     return map
 }
 
-
 operator fun <K, V> AbstractRefMap.RefEntry<K, V>.component1() = this.key
 operator fun <K, V> AbstractRefMap.RefEntry<K, V>.component2() = this.value
 
@@ -123,4 +122,26 @@ fun <K> RefCollection<K>.containsAll(elements: RefCollection<K>): Boolean {
     if(elements is AbstractRefSet && elements.size > size) return false
     val set = wrapLookupIfReasonable(this, elements)
     return elements.all { set.contains(it) }
+}
+
+fun <K> singleton(element: K): AbstractRefSet<K> = object : AbstractRefSet<K> {
+    override val size = 1
+    override fun clear() = throw UnsupportedOperationException()
+    override fun contains(other: K) = element === other
+    override fun iterator() = object : MutableIterator<K> {
+        private var state = true
+        override fun hasNext() = state
+        override fun next(): K {
+            if(state) {
+                state = false
+                return element
+            }
+            throw NoSuchElementException()
+        }
+
+        override fun remove() = throw UnsupportedOperationException()
+    }
+
+    override fun remove(element: K) = throw UnsupportedOperationException()
+    override fun forEach(action: (K) -> Unit) = action(element)
 }
