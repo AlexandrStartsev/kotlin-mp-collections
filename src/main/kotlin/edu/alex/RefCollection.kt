@@ -12,6 +12,10 @@ interface RefCollection<K> {
 
     fun remove(element: K): Boolean
 
+    fun forEach(action: (K) -> Unit) {
+        for (element in this.iterator()) action(element)
+    }
+
     fun add(element: K): Boolean = throw UnsupportedOperationException("Add is not supported on values")
 
     fun isEmpty() = size == 0

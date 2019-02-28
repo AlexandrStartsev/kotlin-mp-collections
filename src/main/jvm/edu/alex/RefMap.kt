@@ -143,4 +143,8 @@ class RefMap<K, V>: AbstractRefMap<K, V> {
 
             override fun contains(element: AbstractRefMap.RefEntry<K, V>) = entrySet.contains(wrapEntry(element))
         }
+
+    override fun forEach(action: (V, K) -> Unit) {
+        backingMap.forEach { refValue, refKey -> action(refKey.get(), refValue.get()) }
+    }
 }

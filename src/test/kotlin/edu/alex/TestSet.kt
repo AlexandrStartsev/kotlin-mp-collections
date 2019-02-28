@@ -17,8 +17,8 @@ class TestSet {
 
         assertEquals("abc", refSet.fold("") { acc, s -> acc + s })
 
-        assertTrue { refSet.retainAll(listOf("a", "b")) }
-        assertFalse { refSet.retainAll(listOf("a", "b")) }
+        assertTrue { refSet.retainAll(RefList("a", "b")) }
+        assertFalse { refSet.retainAll(RefList("a", "b")) }
 
         assertEquals(2, refSet.size)
     }
@@ -69,8 +69,8 @@ class TestSet {
         val set1 = RefSet(set)
         val set2 = RefSet(listOf("6", "1", "2", "4", "5", "8"))
 
-        assertTrue { collectionsEqualOrdered(set, set.intersect(set1)) }
-        assertTrue { collectionsEqualOrdered(set, set.intersect(set2)) }
+        assertTrue { set.collectionEqualsOrdered(set.intersect(set1)) }
+        assertTrue { set.collectionEqualsOrdered(set.intersect(set2)) }
     }
 
     @Test
@@ -240,8 +240,8 @@ class TestSet {
 
         val refSet = RefSet(obj1, obj2, obj3, obj4)
 
-        assertTrue { refSet.retainAll(listOf(obj2, obj3, obj4, obj5)) }
-        assertFalse { refSet.retainAll(listOf(obj2, obj3, obj4, obj5)) }
+        assertTrue { refSet.retainAll(RefList(obj2, obj3, obj4, obj5)) }
+        assertFalse { refSet.retainAll(RefList(obj2, obj3, obj4, obj5)) }
 
         assertEquals(3, refSet.size)
         assertFalse { refSet.contains(obj1) }

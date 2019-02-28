@@ -2,6 +2,10 @@ package edu.alex
 
 @JsName("Set")
 internal external class ES6Set<K> {
+    constructor()
+
+    constructor(anythingGoes: dynamic)
+
     val size: Int
 
     fun add(key: K): ES6Set<K>
@@ -17,4 +21,6 @@ internal external class ES6Set<K> {
     fun has(key: K?): Boolean
 
     fun values(): ES6Iterator<K>
+
+    fun forEach(action:(K) -> Any)
 }

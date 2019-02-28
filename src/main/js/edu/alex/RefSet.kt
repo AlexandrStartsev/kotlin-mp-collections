@@ -1,19 +1,30 @@
 package edu.alex
 
 actual class RefSet<K>: AbstractRefSet<K>  {
-    private val backingSet = ES6Set<K>()
+    internal val backingSet: ES6Set<K>
 
-    constructor ()
+    constructor () {
+        backingSet = ES6Set()
+    }
 
     constructor (c: Iterable<K>) {
+        backingSet = ES6Set()
         c.forEach { add(it) }
     }
 
     constructor (c: RefCollection<K>) {
-        c.forEach { add(it) }
+        when(c) {
+            is RefList -> backingSet = ES6Set(c.backingArray)
+            is RefSet -> backingSet = ES6Set(c.backingSet)
+            else -> {
+                backingSet = ES6Set()
+                c.forEach { add(it) }
+            }
+        }
     }
 
     constructor (vararg args: K) {
+        backingSet = ES6Set()
         args.forEach { add(it) }
     }
 
@@ -32,6 +43,10 @@ actual class RefSet<K>: AbstractRefSet<K>  {
     override fun iterator(): MutableIterator<K> = IteratorHandler(backingSet.values(), { backingSet.delete(it.value) }, { it.value } )
 
     override fun remove(element: K) = backingSet.delete(element)
+
+    override fun forEach(action: (K) -> Unit) {
+        backingSet.forEach(action)
+    }
 
     /*override fun retainAll(elements: RefCollection<K>): Boolean {
         val c = if( elements is AbstractRefSet ) elements else RefSet(elements)

@@ -3,14 +3,6 @@ package edu.alex
 expect class RefList<E>: AbstractRefList<E>
 expect class RefSet<E>: AbstractRefSet<E>
 
-inline fun <T> RefCollection<T>.forEach(action: (T) -> Unit) {
-    for (element in this.iterator()) action(element)
-}
-
-inline fun <K, V> AbstractRefMap<K, V>.forEach(action: (AbstractRefMap.RefEntry<K, V>) -> Unit) {
-    for(entry in iterator()) action(entry)
-}
-
 inline fun <T, R> RefCollection<T>.fold(initial: R, operation: (acc: R, T) -> R): R {
     var accumulator = initial
     for (element in this.iterator()) accumulator = operation(accumulator, element)
@@ -60,23 +52,15 @@ inline fun <T, R> RefCollection<T>.map(crossinline transform: (T) -> R): RefList
     return mapTo(RefList(), transform)
 }
 
-fun <K> RefCollection<K>.retainAll(elements: Collection<K>): Boolean {
-    if(elements is Set) {
-        var modified = false
-        val it = this.iterator()
-        while(it.hasNext()) {
-            if(!elements.contains(it.next())) {
-                it.remove()
-                modified = true
-            }
-        }
-        return modified
-    }
-    return this.retainAll(RefSet(elements))
+fun <K> wrapLookupIfReasonable(itemLookup: RefCollection<K>, itemsToLook: RefCollection<K>? = null): RefCollection<K> {
+    if(itemLookup is AbstractRefSet || itemLookup.size < 50 || itemsToLook != null && itemsToLook.size < 50 ) return itemLookup
+    return RefSet(itemLookup)
 }
 
+//fun <K> RefCollection<K>.retainAll(elements: Collection<K>) = this.retainAll(if(elements.size > 10) RefSet(elements) else RefList(elements))
+
 fun <K> RefCollection<K>.retainAll(elements: RefCollection<K>): Boolean {
-    val other = if(elements is AbstractRefSet) elements else RefSet(elements)
+    val other = wrapLookupIfReasonable(elements, this)
     var modified = false
     val it = this.iterator()
     while(it.hasNext()) {
@@ -92,15 +76,19 @@ fun <K> RefCollection<K>.addAll(elements: Collection<K>) = elements.fold(false) 
 
 fun <K> RefCollection<K>.addAll(elements: RefCollection<K>) = elements.fold(false) { anyChange, e -> add(e) || anyChange }
 
-fun <K> RefCollection<K>.containsAll(elements: Collection<@UnsafeVariance K>) = elements.all { contains(it) }
-
-fun <K> RefCollection<K>.containsAll(elements: RefCollection<K>) = elements.all { contains(it) }
-
 fun <K> RefCollection<K>.removeAll(elements: Collection<K>) = elements.fold(false) { anyChange, e -> remove(e) || anyChange }
 
 fun <K> RefCollection<K>.removeAll(elements: RefCollection<K>) = elements.fold(false) { anyChange, e -> remove(e) || anyChange }
 
 fun <K> RefCollection<K>.intersect(elements: RefCollection<K>): AbstractRefSet<K> = RefSet(this).let { it.retainAll(elements); it }
+
+fun <K, M: RefCollection<K>> RefCollection<K>.intersectTo(destination: M, elements: RefCollection<K>): M {
+    val (lookup, toLook) = if(elements is AbstractRefSet) elements to this else wrapLookupIfReasonable(this, elements) to elements
+    toLook.forEach {
+        if(lookup.contains(it)) destination.add(it)
+    }
+    return destination
+}
 
 fun <K> RefCollection<K>.distinct(): AbstractRefSet<K> = when(this) {
     is AbstractRefSet -> this
@@ -120,22 +108,19 @@ operator fun <K, V> AbstractRefMap.RefEntry<K, V>.component2() = this.value
 // TODO
 fun <T> RefCollection<T>.joinToString() = toCollection(ArrayList()).joinToString()
 
-fun <E> collectionsEqualOrdered(first: RefCollection<E>, second: RefCollection<E>): Boolean {
-    if(first === second) return true
-    if(first !is RefCollectionView && second !is RefCollectionView && first.size != second.size) return false
-    val it1 = first.iterator()
-    val it2 = second.iterator()
+fun <E> RefCollection<E>.collectionEqualsOrdered(other: RefCollection<E>): Boolean {
+    if(this === other) return true
+    if(this !is RefCollectionView && other !is RefCollectionView && this.size != other.size) return false
+    val it1 = this.iterator()
+    val it2 = other.iterator()
     while(it1.hasNext() && it2.hasNext() && it1.next() === it2.next()) ;
     return !it1.hasNext() && !it2.hasNext()
 }
+fun <K> RefCollection<K>.containsAll(elements: Collection<K>) = containsAll(RefList(elements))
 
-
-fun <E> collectionsEqual(first: RefCollection<E>, second: RefCollection<E>): Boolean {
-    if(first.size != second.size) return false
-    val (set, nonSet) = if(first is AbstractRefSet) first to second else if(second is AbstractRefSet) second to first else RefSet(first) to second
-    nonSet.forEach {
-        if(!set.contains(it))
-            return@collectionsEqual false
-    }
-    return true
+fun <K> RefCollection<K>.containsAll(elements: RefCollection<K>): Boolean {
+    if(this === elements) return true
+    if(elements is AbstractRefSet && elements.size > size) return false
+    val set = wrapLookupIfReasonable(this, elements)
+    return elements.all { set.contains(it) }
 }

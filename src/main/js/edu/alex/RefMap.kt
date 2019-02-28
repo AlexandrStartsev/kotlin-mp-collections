@@ -1,7 +1,7 @@
 package edu.alex
 
 class RefMap<K, V>: AbstractRefMap<K, V> {
-    private val map = ES6Map<K, V>()
+    internal val map = ES6Map<K, V>()
 
     constructor()
 
@@ -147,5 +147,9 @@ class RefMap<K, V>: AbstractRefMap<K, V> {
 
     override fun delete(key: K?) {
         map.delete(key)
+    }
+
+    override fun forEach(action: (V, K) -> Unit) {
+        map.forEach(action)
     }
 }

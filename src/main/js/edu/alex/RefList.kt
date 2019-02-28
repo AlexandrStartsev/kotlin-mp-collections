@@ -1,32 +1,34 @@
 package edu.alex
 
 actual class RefList<E>: AbstractRefList<E> {
-    private val backingArray: dynamic //ES6Array<E>()
+    internal val backingArray: ES6Array<E>
 
     constructor () {
-        backingArray = js("[]")
+        backingArray = ES6Array()
     }
 
     constructor (c: Iterable<E>) {
-        backingArray = js("[]")
+        backingArray = ES6Array()
         c.forEach { add(it) }
     }
 
     constructor (c: RefCollection<E>) {
-        if(c is RefList) {
-            backingArray = c.backingArray.slice(0)
-        } else {
-            backingArray = js("[]")
-            c.forEach { add(it) }
+        when(c) {
+            is RefList -> backingArray = c.backingArray.slice(0)
+            //is RefSet -> backingArray = ES6Array.from(c.backingSet) strangely, this is a much slower way ...
+            else -> {
+                backingArray = ES6Array()
+                c.forEach { add(it) }
+            }
         }
     }
 
     constructor (vararg args: E) {
-        backingArray = js("[]")
+        backingArray = ES6Array()
         args.forEach { add(it) }
     }
 
-    private constructor(backingArray: dynamic, nothing: Boolean) {
+    private constructor(backingArray: ES6Array<E>) {
         this.backingArray = backingArray
     }
 
@@ -41,14 +43,14 @@ actual class RefList<E>: AbstractRefList<E> {
         backingArray.splice(0)
     }
 
-    override fun contains(element: E): Boolean = backingArray.some { it -> it === element }
+    override fun contains(element: E): Boolean = indexOf(element) >= 0
 
     override fun get(index: Int): E {
         if( index < 0 || index >= size )
             throw IndexOutOfBoundsException()
-        var a = backingArray[index]
-        js("typeof a === 'undefined' && (a = null)")
-        return a
+        var tmp = backingArray.asDynamic()[index]
+        if(jsTypeOf(tmp) === "undefined") tmp = null
+        return tmp
     }
 
     override fun indexOf(element: E): Int = backingArray.indexOf(element)
@@ -60,14 +62,14 @@ actual class RefList<E>: AbstractRefList<E> {
         override fun next(): E {
             if(hasNext()) {
                 state = true
-                var tmp: dynamic = backingArray[index++]
+                var tmp = backingArray.asDynamic()[index++]
                 if(jsTypeOf(tmp) === "undefined") tmp = null
                 return tmp
             }
             throw NoSuchElementException()
         }
         override fun remove() {
-            if(state == false) {
+            if(!state) {
                 throw IllegalStateException()
             }
             backingArray.splice(--index, 1)
@@ -95,8 +97,8 @@ actual class RefList<E>: AbstractRefList<E> {
     override fun set(index: Int, element: E): E {
         if( index < 0 || index >= size )
             throw IndexOutOfBoundsException()
-        val old = backingArray[index]
-        backingArray[index] = element
+        val old = backingArray.asDynamic()[index]
+        backingArray.asDynamic()[index] = element
         return old
     }
 
@@ -104,11 +106,15 @@ actual class RefList<E>: AbstractRefList<E> {
         if (start < 0 || start >= size)
             throw IndexOutOfBoundsException()
         return when (end) {
-            null -> RefList<E>(backingArray.slice(start), true)
+            null -> RefList(backingArray.slice(start))
             else -> {
                 if (end < start || end > size) throw IndexOutOfBoundsException()
-                RefList<E>(backingArray.slice(start, end), true)
+                RefList(backingArray.slice(start, end))
             }
         }
+    }
+
+    override fun forEach(action: (E) -> Unit) {
+        backingArray.forEach(action)
     }
 }

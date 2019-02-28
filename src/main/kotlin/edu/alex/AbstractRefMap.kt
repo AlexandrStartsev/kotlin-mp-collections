@@ -51,7 +51,9 @@ interface AbstractRefMap<K, V> {
 
     fun putAll(from: Map<K, V>) = from.forEach { put(it.key, it.value) }
 
-    fun putAll(from: AbstractRefMap<K, V>) = from.forEach { put(it.key, it.value) }
+    fun putAll(from: AbstractRefMap<K, V>) = from.forEach { value, key -> put(key, value) }
 
     fun delete(key: K?) { remove(key) }
+
+    fun forEach(action: (V, K) -> Unit)
 }
